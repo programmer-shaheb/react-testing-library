@@ -1,8 +1,63 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen } from "@testing-library/react";
+import App from "./App";
+import userEvent from "@testing-library/user-event";
 
-test('renders learn react link', () => {
+// test('renders learn react link', () => {
+//   render(<App />);
+//   const linkElement = screen.getByText(/learn react/i);
+//   expect(linkElement).toBeInTheDocument();
+// });
+
+// test("renders reload", () => {
+//   render(<App />);
+//   const xyz = screen.getByText(/Edit/i);
+//   expect(xyz).toBeInTheDocument();
+// });
+
+test("inputs should be in initially empty", () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const emailInputElement = screen.getByRole("textbox");
+  const passwordInputElement = screen.getByLabelText("Password");
+  const cpasswordInputElement = screen.getByLabelText(/confirm password/i);
+  expect(emailInputElement.value).toBe("");
+  expect(passwordInputElement.value).toBe("");
+  expect(cpasswordInputElement.value).toBe("");
+});
+
+test("event handler", () => {
+  render(<App />);
+  const emailInputElement = screen.getByRole("textbox", {
+    name: /email/i,
+  });
+  const passwordInputElement = screen.getByLabelText("Password");
+  const cpasswordInputElement = screen.getByLabelText(/confirm password/i);
+
+  userEvent.type(emailInputElement, "abidurrahman471@gmail.com");
+  expect(emailInputElement.value).toBe("abidurrahman471@gmail.com");
+
+  userEvent.type(cpasswordInputElement, "cpassword!");
+  expect(cpasswordInputElement.value).toBe("cpassword!");
+
+  userEvent.type(passwordInputElement, "password!");
+  expect(passwordInputElement.value).toBe("password!");
+});
+
+test("should show email error message on invalid email", () => {
+  render(<App />);
+  const emailErrorElement = screen.queryByText(
+    /the email you type is invalid/i
+  );
+  const emailInputElement = screen.getByRole("textbox", {
+    name: /email/i,
+  });
+  userEvent.type(emailInputElement, "abidurrahman471gmail.com");
+
+  expect(emailErrorElement).not.toBeInTheDocument();
+
+  const buttonInputElement = screen.getByRole("button", {
+    name: /submit/i,
+  });
+
+  userEvent.click(buttonInputElement);
+  expect(emailErrorElement).toBeInTheDocument();
 });
