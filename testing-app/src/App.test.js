@@ -59,5 +59,33 @@ test("should show email error message on invalid email", () => {
   });
 
   userEvent.click(buttonInputElement);
-  expect(emailErrorElement).toBeInTheDocument();
+  const emailErrorElementAgain = screen.queryByText(
+    /the email you type is invalid/i
+  );
+  expect(emailErrorElementAgain).toBeInTheDocument();
+});
+
+test("should show password error if password is not strong", () => {
+  render(<App />);
+
+  const emailInputElement = screen.getByRole("textbox", { name: /email/i });
+  const passwordInputElement = screen.getByLabelText("Password");
+  const passwordErrorElement = screen.queryByText(/password is too weak!/i);
+
+  userEvent.type(emailInputElement, "abidurrahman@gmail.com");
+  expect(passwordErrorElement).not.toBeInTheDocument();
+
+  // userEvent.type(passwordInputElement, "@kASH123456789");
+  // expect(passwordErrorElement).not.toBeInTheDocument();
+
+  userEvent.type(passwordInputElement, "1234");
+
+  const buttonInputElement = screen.getByRole("button", { name: /submit/i });
+  userEvent.click(buttonInputElement);
+
+  const passwordErrorElementAgain = screen.queryByText(
+    /password is too weak!/i
+  );
+
+  expect(passwordErrorElementAgain).toBeInTheDocument();
 });
