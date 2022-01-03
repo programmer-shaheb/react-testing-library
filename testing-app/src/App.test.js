@@ -89,3 +89,51 @@ test("should show password error if password is not strong", () => {
 
   expect(passwordErrorElementAgain).toBeInTheDocument();
 });
+
+test("should show cpassword error if password don't match", () => {
+  render(<App />);
+
+  const emailInputElement = screen.getByRole("textbox", { name: /email/i });
+  const passwordInputElement = screen.getByLabelText("Password");
+  const cpasswordInputElement = screen.getByLabelText(/confirm password/i);
+
+  const cpasswordErrorElement = screen.queryByText(/password don't match!/i);
+
+  const submitBtnElement = screen.getByRole("button", { name: /submit/i });
+  userEvent.type(emailInputElement, "abidurrahman471@gmail.com");
+  userEvent.type(passwordInputElement, "@kASH123456789");
+
+  expect(cpasswordErrorElement).not.toBeInTheDocument();
+
+  userEvent.type(cpasswordInputElement, "123456");
+  userEvent.click(submitBtnElement);
+
+  const cpasswordErrorElementAgain = screen.queryByText(
+    /password don't match!/i
+  );
+
+  expect(cpasswordErrorElementAgain).toBeInTheDocument();
+});
+
+test("should show no error if all input is valid", () => {
+  render(<App />);
+
+  const emailInputElement = screen.getByRole("textbox", { name: /email/i });
+  const passwordInputElement = screen.getByLabelText("Password");
+  const cpasswordInputElement = screen.getByLabelText(/confirm password/i);
+
+  const submitBtnElement = screen.getByRole("button", { name: /submit/i });
+  userEvent.type(emailInputElement, "abidurrahman471@gmail.com");
+  userEvent.type(passwordInputElement, "@kASH123456789");
+  userEvent.type(cpasswordInputElement, "@kASH123456789");
+
+  userEvent.click(submitBtnElement);
+  const emailErrorElement = screen.queryByText(
+    /the email you type is invalid/i
+  );
+  const passwordErrorElement = screen.queryByText(/password is too weak!/i);
+  const cpasswordErrorElement = screen.queryByText(/password don't match!/i);
+  expect(emailErrorElement).not.toBeInTheDocument();
+  expect(passwordErrorElement).not.toBeInTheDocument();
+  expect(cpasswordErrorElement).not.toBeInTheDocument();
+});

@@ -15,7 +15,7 @@ practices.</p>
 
 <br />
 
-[**Read The Docs**](https://testing-library.com/react) |
+[**Read The Docs**](https://testing-library.com/react)
 
 <br />
 </div>
